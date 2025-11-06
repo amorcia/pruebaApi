@@ -21,7 +21,7 @@ public class UsuarioDAO {
     @Column(name = "nombre")
     private String nombre;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "password")

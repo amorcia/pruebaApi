@@ -5,12 +5,10 @@ import java.time.LocalDateTime;
 
 public class ProyectoDTO {
 
-    private Integer id;
     private String nombre;
     private String descripcion;
     private String tipo;
     private String color;
-    private Integer creadorId;
     private Integer equipoId;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
@@ -19,15 +17,6 @@ public class ProyectoDTO {
     private LocalDateTime fechaCreacion;
 
     // --- Getters y Setters ---
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getNombre() {
         return nombre;
     }
@@ -58,14 +47,6 @@ public class ProyectoDTO {
 
     public void setColor(String color) {
         this.color = color;
-    }
-
-    public Integer getCreadorId() {
-        return creadorId;
-    }
-
-    public void setCreadorId(Integer creadorId) {
-        this.creadorId = creadorId;
     }
 
     public Integer getEquipoId() {

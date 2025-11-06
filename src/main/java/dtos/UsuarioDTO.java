@@ -3,28 +3,19 @@ package dtos;
 import java.time.LocalDateTime;
 
 // Este DTO es para MOSTRAR un usuario.
-// Fíjate que NO INCLUYE el campo 'password' por seguridad.
+// Fíjate que NO INCLUYE el campo 'password' ni 'id'.
 
 public class UsuarioDTO {
 
-    private Integer id;
+    // --- ID ELIMINADO ---
     private String nombre;
     private String email;
     private String avatarUrl;
-    private Integer rolId;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaUltimaSesion;
     private Boolean activo;
 
-    // --- Getters y Setters ---
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    // --- Getters y Setters (sin los de ID) ---
 
     public String getNombre() {
         return nombre;
@@ -48,14 +39,6 @@ public class UsuarioDTO {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
-    }
-
-    public Integer getRolId() {
-        return rolId;
-    }
-
-    public void setRolId(Integer rolId) {
-        this.rolId = rolId;
     }
 
     public LocalDateTime getFechaCreacion() {
@@ -82,4 +65,3 @@ public class UsuarioDTO {
         this.activo = activo;
     }
 }
-
