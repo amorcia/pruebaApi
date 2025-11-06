@@ -5,14 +5,15 @@ import java.util.Map;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus; // <-- NUEVA IMPORTACIÓN
-import org.springframework.http.ResponseEntity; // <-- NUEVA IMPORTACIÓN
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping; // <-- NUEVA IMPORTACIÓN
-import org.springframework.web.bind.annotation.RequestBody; // <-- NUEVA IMPORTACIÓN
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import dtos.RegistroUsuarioDTO; // <-- NUEVA IMPORTACIÓN
+// Importamos el DTO de Registro que creamos
+import dtos.RegistroUsuarioDTO; 
 import dtos.UsuarioDTO;
 import servicios.UsuariosServicio;
 
@@ -24,7 +25,8 @@ public class UsuariosControlador {
 
     /**
      * GET /usuarios
-     * Obtiene una lista de todos los usuarios.
+     * Obtiene una lista de todos los usuarios (sin IDs ni contraseñas).
+     * (Este endpoint lo creamos antes)
      */
     @GetMapping("/usuarios")
     public Map<String, Object> getUsuariosData() {
@@ -34,12 +36,10 @@ public class UsuariosControlador {
         return respuesta;
     }
 
-    // --- ¡NUEVO ENDPOINT DE REGISTRO! ---
     /**
      * POST /usuarios
      * Registra un nuevo usuario en la base de datos.
-     * @param datosRegistro JSON con nombre, email y password
-     * @return 201 Created con el usuario creado (DTO) o 400 Bad Request si el email ya existe.
+     * (Este endpoint lo creamos antes)
      */
     @PostMapping("/usuarios")
     public ResponseEntity<?> registrarNuevoUsuario(@RequestBody RegistroUsuarioDTO datosRegistro) {
@@ -52,10 +52,10 @@ public class UsuariosControlador {
             
         } catch (IllegalStateException e) {
             // Si el servicio lanza la excepción (email duplicado), devuelve un 400 Bad Request
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             // Para cualquier otro error inesperado
-            return new ResponseEntity<>("Error interno al registrar el usuario.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(Map.of("error", "Error interno al registrar el usuario."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

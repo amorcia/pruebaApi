@@ -1,74 +1,90 @@
 package servicios;
 
 import daos.UsuarioDAO;
-import dtos.RegistroUsuarioDTO; // <-- NUEVA IMPORTACIÓN
+import dtos.RegistroUsuarioDTO;
 import dtos.UsuarioDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder; // <-- NUEVA IMPORTACIÓN
+import org.springframework.security.core.userdetails.User; // <-- NUEVA IMPORTACIÓN
+import org.springframework.security.core.userdetails.UserDetails; // <-- NUEVA IMPORTACIÓN
+import org.springframework.security.core.userdetails.UserDetailsService; // <-- NUEVA IMPORTACIÓN
+import org.springframework.security.core.userdetails.UsernameNotFoundException; // <-- NUEVA IMPORTACIÓN
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import repositorios.UsuarioRepositorio;
 
-import java.time.LocalDateTime; // <-- NUEVA IMPORTACIÓN
+import java.time.LocalDateTime;
+import java.util.ArrayList; // <-- NUEVA IMPORTACIÓN
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Servicio de lógica de negocio para la entidad Usuario.
- * Se encarga de la lógica y la conversión de DAO a DTO.
+ * Se encarga de la lógica (DTOs) Y de la seguridad (UserDetails).
  */
 @Service
-public class UsuariosServicio {
+public class UsuariosServicio implements UserDetailsService { // <-- ¡IMPLEMENTAMOS LA INTERFAZ!
 
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
 
-    // Inyectamos el codificador de contraseñas
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    // --- ¡NUEVO MÉTODO DE UserDetailsService! ---
+    /**
+     * Este método es llamado automáticamente por Spring Security cuando
+     * intentamos autenticar a un usuario (ej: en el login).
+     */
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        
+        // 1. Buscar el usuario en nuestro repositorio
+        UsuarioDAO usuarioDAO = usuarioRepositorio.findByEmail(email)
+                .orElseThrow(() -> 
+                    new UsernameNotFoundException("No se encontró un usuario con el email: " + email)
+                );
+
+        // 2. Convertir nuestro UsuarioDAO en un UserDetails de Spring Security
+        return new User(
+            usuarioDAO.getEmail(),           // El "username"
+            usuarioDAO.getPassword(),        // La contraseña YA HASHEADA de la BD
+            new ArrayList<>()               // La lista de roles/autoridades (por ahora vacía)
+        );
+    }
+
+    // --- LÓGICA DE NEGOCIO (la que ya tenías) ---
 
     /**
      * Obtiene todos los usuarios y los convierte a DTO.
      */
     public List<UsuarioDTO> obtenerTodosLosUsuarios() {
-        return usuarioRepositorio.findAll() // 1. Obtiene Entidades (DAO)
+        return usuarioRepositorio.findAll()
                 .stream()
-                .map(this::convertirUsuarioA_DTO) // 2. Convierte a DTO
+                .map(this::convertirUsuarioA_DTO)
                 .collect(Collectors.toList());
     }
 
-    // --- ¡NUEVO MÉTODO DE REGISTRO! ---
     /**
      * Registra un nuevo usuario en el sistema.
-     * @param datosRegistro DTO con los datos del nuevo usuario.
-     * @return El nuevo usuario, convertido a UsuarioDTO.
-     * @throws IllegalStateException si el email ya está en uso.
      */
     public UsuarioDTO registrarNuevoUsuario(RegistroUsuarioDTO datosRegistro) throws IllegalStateException {
         
-        // 1. VERIFICAMOS SI EL EMAIL YA EXISTE (Lógica de negocio)
         if (usuarioRepositorio.findByEmail(datosRegistro.getEmail()).isPresent()) {
             throw new IllegalStateException("El email " + datosRegistro.getEmail() + " ya está registrado.");
         }
 
-        // 2. Si no existe, creamos el usuario DAO
         UsuarioDAO nuevoUsuario = new UsuarioDAO();
         nuevoUsuario.setNombre(datosRegistro.getNombre());
         nuevoUsuario.setEmail(datosRegistro.getEmail());
         nuevoUsuario.setActivo(true);
         nuevoUsuario.setFechaCreacion(LocalDateTime.now());
-        
-        // Asignamos un Rol por defecto (ej: '2' para "Usuario General")
-        // (El '1' lo reservamos para el Admin que creamos en el Crud.java)
-        nuevoUsuario.setRolId(2); 
+        nuevoUsuario.setRolId(2); // Rol de "Usuario General"
 
-        // 3. Hasheamos la contraseña
         String passwordHasheada = passwordEncoder.encode(datosRegistro.getPassword());
         nuevoUsuario.setPassword(passwordHasheada);
         
-        // 4. Guardamos en la BD
         UsuarioDAO usuarioGuardado = usuarioRepositorio.save(nuevoUsuario);
 
-        // 5. Devolvemos el DTO (sin contraseña)
         return convertirUsuarioA_DTO(usuarioGuardado);
     }
 
@@ -78,7 +94,6 @@ public class UsuariosServicio {
     private UsuarioDTO convertirUsuarioA_DTO(UsuarioDAO entidad) {
         UsuarioDTO dto = new UsuarioDTO();
         
-        // Mapeamos los campos del DTO (sin IDs)
         dto.setNombre(entidad.getNombre());
         dto.setEmail(entidad.getEmail());
         dto.setAvatarUrl(entidad.getAvatarUrl());
