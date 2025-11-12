@@ -1,4 +1,4 @@
-package daos;
+package entidades;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,8 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Project")
-public class ProyectoDAO {
+@Table(name = "Sprint")
+public class SprintDAO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,32 +22,23 @@ public class ProyectoDAO {
     @Column(name = "nombre")
     private String nombre;
 
-    @Column(name = "descripcion")
-    private String descripcion; // Mapeado desde text
+    @Column(name = "proyecto_id")
+    private Integer proyectoId;
 
-    @Column(name = "tipo")
-    private String tipo;
-
-    @Column(name = "color")
-    private String color;
-
-    @Column(name = "creador_id")
-    private Integer creadorId;
-
-    @Column(name = "equipo_id")
-    private Integer equipoId;
+    @Column(name = "objetivo")
+    private String objetivo; // Mapeado desde text
 
     @Column(name = "fecha_inicio")
-    private LocalDate fechaInicio; // Mapeado desde date
+    private LocalDate fechaInicio;
 
     @Column(name = "fecha_fin")
-    private LocalDate fechaFin; // Mapeado desde date
+    private LocalDate fechaFin;
 
     @Column(name = "estado")
     private String estado;
 
-    @Column(name = "progreso")
-    private Float progreso; // Mapeado desde float
+    @Column(name = "velocidad")
+    private Integer velocidad;
 
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
@@ -70,44 +61,20 @@ public class ProyectoDAO {
         this.nombre = nombre;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public Integer getProyectoId() {
+        return proyectoId;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setProyectoId(Integer proyectoId) {
+        this.proyectoId = proyectoId;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getObjetivo() {
+        return objetivo;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public Integer getCreadorId() {
-        return creadorId;
-    }
-
-    public void setCreadorId(Integer creadorId) {
-        this.creadorId = creadorId;
-    }
-
-    public Integer getEquipoId() {
-        return equipoId;
-    }
-
-    public void setEquipoId(Integer equipoId) {
-        this.equipoId = equipoId;
+    public void setObjetivo(String objetivo) {
+        this.objetivo = objetivo;
     }
 
     public LocalDate getFechaInicio() {
@@ -134,12 +101,12 @@ public class ProyectoDAO {
         this.estado = estado;
     }
 
-    public Float getProgreso() {
-        return progreso;
+    public Integer getVelocidad() {
+        return velocidad;
     }
 
-    public void setProgreso(Float progreso) {
-        this.progreso = progreso;
+    public void setVelocidad(Integer velocidad) {
+        this.velocidad = velocidad;
     }
 
     public LocalDateTime getFechaCreacion() {

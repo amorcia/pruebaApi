@@ -1,8 +1,10 @@
 package repositorios;
 
-import daos.EstadoTareaDAO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import entidades.EstadoTareaDAO;
+
 import java.util.List;
 
 @Repository

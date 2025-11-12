@@ -1,11 +1,15 @@
 package repositorios;
 
-import daos.RolDAO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import entidades.RolDAO;
+
+import java.util.Optional;
+
 @Repository
 public interface RolRepositorio extends JpaRepository<RolDAO, Integer> {
-    // Spring Data JPA crea automáticamente los métodos:
-    // save(), findById(), findAll(), deleteById(), etc.
+    
+    // Método para buscar un Rol por su nombre (Ej: "Admin")
+    Optional<RolDAO> findByNombre(String nombre);
 }

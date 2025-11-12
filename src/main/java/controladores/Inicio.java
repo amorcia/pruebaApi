@@ -19,7 +19,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 @SpringBootApplication
 @ComponentScan(basePackages = {"controladores", "servicios", "repositorios","config"})
-@EntityScan(basePackages = "daos")
+@EntityScan(basePackages = "entidades")
 @EnableJpaRepositories(basePackages = "repositorios")
 public class Inicio {
 

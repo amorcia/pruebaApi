@@ -1,8 +1,10 @@
 package repositorios;
 
-import daos.SprintDAO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import entidades.SprintDAO;
+
 import java.util.List;
 
 @Repository

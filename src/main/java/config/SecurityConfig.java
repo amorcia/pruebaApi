@@ -3,6 +3,7 @@ package config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod; 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,12 +11,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration; // <-- NUEVA IMPORTACIÓN
-import org.springframework.web.cors.CorsConfigurationSource; // <-- NUEVA IMPORTACIÓN
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource; // <-- NUEVA IMPORTACIÓN
-import servicios.UsuariosServicio;
+// --- ¡NUEVA IMPORTACIÓN! ---
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter; 
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import servicios.UsuariosServicio; 
 
-import java.util.List; // <-- NUEVA IMPORTACIÓN
+import java.util.Arrays; 
 
 @Configuration
 @EnableWebSecurity
@@ -27,64 +30,65 @@ public class SecurityConfig {
     @Autowired
     private PasswordEncoder codificadorContrasena;
 
+    // --- ¡NUEVA INYECCIÓN! ---
+    // Inyectamos el filtro que creaste en el archivo anterior
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter; 
+
     @Bean
     public AuthenticationManager gestorAutenticacion(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(servicioUsuarios)
+                .userDetailsService(servicioUsuarios) 
                 .passwordEncoder(codificadorContrasena)
                 .and()
                 .build();
     }
 
-    /**
-     * Define la "Cadena de Filtros" de seguridad.
-     */
     @Bean
     public SecurityFilterChain cadenaFiltrosSeguridad(HttpSecurity http) throws Exception {
         
         http
-            // --- ¡NUEVO! Habilitamos CORS usando la configuración de abajo ---
-            .cors(cors -> cors.configurationSource(fuenteConfiguracionCors()))
-
-            // 1. Deshabilitar CSRF
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
-
-            // 2. Política de Sesión SIN ESTADO
             .sessionManagement(session -> 
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-
-            // 3. Reglas de Autorización de Peticiones
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()     
-                .requestMatchers("/usuarios").permitAll() 
+                // Acceso público SÓLO para /auth/** (Login, Reset, etc.)
+                .requestMatchers("/auth/**").permitAll()    
+                
+                // CUALQUIER OTRA petición (incluyendo /usuarios/**)
+                // debe estar autenticada (necesita el token).
+                // .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // <-- Quitamos esto, es inseguro
+                .requestMatchers("/usuarios/**").authenticated() 
                 .anyRequest().authenticated() 
-            );
+            )
+            
+            // --- ¡LA SOLUCIÓN! ---
+            // Añadimos nuestro filtro JWT ANTES del filtro de autenticación de Spring
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // --- ¡BEAN NUEVO PARA CONFIGURAR CORS! ---
     /**
-     * Define la configuración de CORS para toda la aplicación.
-     * Esto le dice al navegador que confíe en nuestro front-end.
+     * Define las reglas de CORS (¡Correcto!)
      */
     @Bean
-    CorsConfigurationSource fuenteConfiguracionCors() {
-        CorsConfiguration configuracion = new CorsConfiguration();
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
         
-        // Orígenes permitidos (para desarrollo, "*" permite todo)
-        configuracion.setAllowedOrigins(List.of("*")); 
+        // Acepta peticiones de CUALQUIER origen
+        configuration.setAllowedOrigins(Arrays.asList("*")); 
         
-        // Métodos HTTP permitidos (GET, POST, etc.)
-        configuracion.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+        // Acepta todos los métodos que usamos
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
         
-        // Cabeceras permitidas (importante para tokens)
-        configuracion.setAllowedHeaders(List.of("*"));
-
+        // Acepta todas las cabeceras (incluyendo 'Authorization')
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuracion); // Aplicar a todas las rutas
-        
+        source.registerCorsConfiguration("/**", configuration); // Aplica a TODAS las rutas
         return source;
     }
 }

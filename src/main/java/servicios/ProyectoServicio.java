@@ -1,7 +1,8 @@
 package servicios;
 
-import daos.ProyectoDAO;
 import dtos.ProyectoDTO;
+import entidades.ProyectoDAO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import repositorios.ProyectoRepositorio;

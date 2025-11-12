@@ -1,8 +1,9 @@
 package repositorios;
 
-import daos.EquipoDAO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import entidades.EquipoDAO;
 
 @Repository
 public interface EquipoRepositorio extends JpaRepository<EquipoDAO, Integer> {

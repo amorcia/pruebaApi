@@ -1,14 +1,15 @@
 package dtos;
 
-/**
- * DTO para RECIBIR datos en el endpoint de registro.
- * Solo contiene los campos que el usuario debe enviar.
- */
+// Este DTO se usa para RECIBIR datos del frontend (al crear o editar)
 public class RegistroUsuarioDTO {
 
     private String nombre;
     private String email;
-    private String password;
+    private Integer rolId; // <-- ¡EL CAMPO QUE FALTABA!
+    private Boolean activo;
+    
+    // NOTA: 'password' no se incluye aquí, 
+    // se asignará 'tsk006' en el servicio.
 
     // --- Getters y Setters ---
 
@@ -28,11 +29,19 @@ public class RegistroUsuarioDTO {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public Integer getRolId() {
+        return rolId;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setRolId(Integer rolId) {
+        this.rolId = rolId;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 }

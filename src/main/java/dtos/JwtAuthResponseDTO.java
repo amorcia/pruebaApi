@@ -1,15 +1,24 @@
 package dtos;
 
-// Este DTO se usa para ENVIAR el Token (el "pase") al front-end
+// Este DTO ahora llevará el token, el rol, el email Y el flag de primer login
 public class JwtAuthResponseDTO {
+    
     private String accessToken;
     private String tokenType = "Bearer";
+    private Integer rolId; // <-- ¡NECESITAMOS ESTE CAMPO!
+    private String email; 
+    private boolean necesitaCambiarClave;
 
-    public JwtAuthResponseDTO(String accessToken) {
+    // --- CONSTRUCTOR NUEVO ---
+    public JwtAuthResponseDTO(String accessToken, Integer rolId, String email, boolean necesitaCambiarClave) {
         this.accessToken = accessToken;
+        this.rolId = rolId;
+        this.email = email;
+        this.necesitaCambiarClave = necesitaCambiarClave;
     }
 
     // --- Getters y Setters ---
+    
     public String getAccessToken() {
         return accessToken;
     }
@@ -21,5 +30,23 @@ public class JwtAuthResponseDTO {
     }
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
+    }
+    public Integer getRolId() {
+        return rolId;
+    }
+    public void setRolId(Integer rolId) {
+        this.rolId = rolId;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public boolean isNecesitaCambiarClave() {
+        return necesitaCambiarClave;
+    }
+    public void setNecesitaCambiarClave(boolean necesitaCambiarClave) {
+        this.necesitaCambiarClave = necesitaCambiarClave;
     }
 }

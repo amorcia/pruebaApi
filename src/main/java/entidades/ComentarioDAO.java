@@ -1,4 +1,4 @@
-package daos;
+package entidades;
 
 import java.time.LocalDateTime;
 

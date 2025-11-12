@@ -1,4 +1,4 @@
-package daos;
+package entidades;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,8 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Tag")
-public class EtiquetaDAO {
+@Table(name = "TaskStatus")
+public class EstadoTareaDAO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,11 +19,17 @@ public class EtiquetaDAO {
     @Column(name = "nombre")
     private String nombre;
 
+    @Column(name = "proyecto_id")
+    private Integer proyectoId;
+
     @Column(name = "color")
     private String color;
 
-    @Column(name = "proyecto_id")
-    private Integer proyectoId;
+    @Column(name = "orden")
+    private Integer orden;
+
+    @Column(name = "es_estado_final")
+    private Boolean esEstadoFinal;
 
     // --- Getters y Setters ---
 
@@ -43,6 +49,14 @@ public class EtiquetaDAO {
         this.nombre = nombre;
     }
 
+    public Integer getProyectoId() {
+        return proyectoId;
+    }
+
+    public void setProyectoId(Integer proyectoId) {
+        this.proyectoId = proyectoId;
+    }
+
     public String getColor() {
         return color;
     }
@@ -51,11 +65,20 @@ public class EtiquetaDAO {
         this.color = color;
     }
 
-    public Integer getProyectoId() {
-        return proyectoId;
+    public Integer getOrden() {
+        return orden;
     }
 
-    public void setProyectoId(Integer proyectoId) {
-        this.proyectoId = proyectoId;
+    public void setOrden(Integer orden) {
+        this.orden = orden;
+    }
+
+    public Boolean isEsEstadoFinal() {
+        return esEstadoFinal;
+    }
+
+    public void setEsEstadoFinal(Boolean esEstadoFinal) {
+        this.esEstadoFinal = esEstadoFinal;
     }
 }
+	

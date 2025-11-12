@@ -1,8 +1,10 @@
 package repositorios;
 
-import daos.ComentarioDAO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import entidades.ComentarioDAO;
+
 import java.util.List;
 
 @Repository
